@@ -1,4 +1,6 @@
 #include "../../include/glad/glad.h"
+#include <GLFW/glfw3.h>
+#include <iostream>
 
 const char *vertexShaderSrc = "#version 330 core \n"
                               "layout (location = 0) in vec3 aPos;\n"
@@ -16,4 +18,36 @@ const char *fragmentShaderSrc = "#version 330 core                 \n"
                                 "  FragColor = vec4(outColor, 1.0);\n"
                                 "}\0";
 
-int main() { return 0; }
+void processInput(GLFWwindow *window) { glfwGetKey(window, int key) }
+
+int main() {
+
+  glfwInit();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  GLFWwindow *window = glfwCreateWindow(800, 600, "CAP6-Exer1", NULL, NULL);
+
+  if (window == NULL) {
+    std::cerr << "ERROR::GLFW::WINDOW::CREATE\n";
+
+    return -1;
+  }
+
+  if (!gladLoadGLLoader((GLADloadproc)(glfwGetProcAddress))) {
+    std::cerr << "ERROR::GLFW::GLAD::LOAD\n";
+
+    return -1;
+  };
+
+  glViewport(0, 0, 800, 600);
+
+  while (!glfwWindowShouldClose(window)) {
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+
+  return 0;
+}

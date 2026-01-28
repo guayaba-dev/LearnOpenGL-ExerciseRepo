@@ -30,7 +30,20 @@ add_executable(
 
 add_executable(                                   
   ${PROJECT_NAME}-cap6 src/cap6/cap6.cpp   
-)                                                 
+)
+
+add_executable(                                    
+  ${PROJECT_NAME}-cap6-Exer1 src/cap6/Exer1.cpp           
+)                                                  
+
+add_executable(                                            
+  ${PROJECT_NAME}-cap6-Exer2 src/cap6/Exer2.cpp            
+)
+
+add_executable(                                             
+  ${PROJECT_NAME}-cap6-Exer3 src/cap6/Exer3.cpp             
+)                                                           
+
 
 target_link_libraries(
   ${PROJECT_NAME}-cap5-Exer1 
@@ -62,4 +75,29 @@ target_link_libraries(
   GL                           
   glfw                         
   ${PROJECT_NAME}_lib          
-)                              
+)
+
+target_link_libraries(          
+  ${PROJECT_NAME}-cap6-Exer1          
+  PRIVATE                       
+  GL                            
+  glfw                          
+  ${PROJECT_NAME}_lib           
+)
+
+target_link_libraries(                 
+  ${PROJECT_NAME}-cap6-Exer2           
+  PRIVATE                              
+  GL                                   
+  glfw                                 
+  ${PROJECT_NAME}_lib                  
+)                                      
+
+target_link_libraries(                  
+  ${PROJECT_NAME}-cap6-Exer3            
+  PRIVATE                               
+  GL                                    
+  glfw                                  
+  ${PROJECT_NAME}_lib                   
+)                                       
+
