@@ -59,7 +59,7 @@ Shader::Shader(const char *vertexPath, const char *framentPath) {
 
   } catch (std::fstream::failure) {
 
-    std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY\n";
+    std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_OPENED\n";
   }
 
   const char *vShaderCode = vShaderSrc.c_str();

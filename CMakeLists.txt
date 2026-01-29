@@ -42,7 +42,12 @@ add_executable(
 
 add_executable(                                             
   ${PROJECT_NAME}-cap6-Exer3 src/cap6/Exer3.cpp             
-)                                                           
+)
+
+add_executable(                                              
+  ${PROJECT_NAME}-cap7 src/cap7/cap7.cpp              
+)                                                            
+
 
 
 target_link_libraries(
@@ -100,4 +105,12 @@ target_link_libraries(
   glfw                                  
   ${PROJECT_NAME}_lib                   
 )                                       
+
+target_link_libraries(                   
+  ${PROJECT_NAME}-cap7            
+  PRIVATE                                
+  GL                                     
+  glfw                                   
+  ${PROJECT_NAME}_lib                    
+)                                        
 
