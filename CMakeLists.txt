@@ -10,9 +10,6 @@ find_package(GLFW 3.3 QUIET)
 
 
 file(GLOB SRC_FILES src/*.cpp src/*.c)
-list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/cap5/Exer1.cpp")
-list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/cap5/Exer2.cpp")
-list(REMOVE_ITEM SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/cap5/Exer3.cpp")
 
 add_library(${PROJECT_NAME}_lib ${SRC_FILES})
 
@@ -45,8 +42,13 @@ add_executable(
 )
 
 add_executable(                                              
-  ${PROJECT_NAME}-cap7 src/cap7/cap7.cpp              
-)                                                            
+  ${PROJECT_NAME}-cap7-Exer1 src/cap7/Exer1.cpp              
+)
+
+add_executable(                                               
+  ${PROJECT_NAME}-cap7-Exer2 src/cap7/Exer2.cpp               
+)
+
 
 
 
@@ -107,10 +109,19 @@ target_link_libraries(
 )                                       
 
 target_link_libraries(                   
-  ${PROJECT_NAME}-cap7            
+  ${PROJECT_NAME}-cap7-Exer1            
   PRIVATE                                
   GL                                     
   glfw                                   
   ${PROJECT_NAME}_lib                    
 )                                        
+
+target_link_libraries(                    
+  ${PROJECT_NAME}-cap7-Exer2              
+  PRIVATE                                 
+  GL                                      
+  glfw                                    
+  ${PROJECT_NAME}_lib                     
+)                                         
+
 
