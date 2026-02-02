@@ -6,10 +6,21 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+float mixAmount = 0;
+
 void processInput(GLFWwindow *window) {
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    mixAmount += 0.01;
+
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    mixAmount -= 0.01;
+
+  mixAmount = (mixAmount > 1) ? 1. : mixAmount;
+  mixAmount = (mixAmount < 0) ? 0. : mixAmount;
 }
 
 void glfw_windows_size_change_callback(GLFWwindow *window, int HEIGHT,
@@ -115,7 +126,7 @@ int main() {
   stbi_image_free(data);
 
   Shader shader = Shader("./assets/shaders/cap7/shader.vert",
-                         "./assets/shaders/cap7/Exer1/shader.frag");
+                         "./assets/shaders/cap7/Exer4.frag");
   shader.use();
 
   shader.setInt("texture1", 0);
@@ -127,6 +138,7 @@ int main() {
     processInput(window);
 
     glClear(GL_COLOR_BUFFER_BIT);
+    shader.setDouble("mixAmount", mixAmount);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, boxTexture);
