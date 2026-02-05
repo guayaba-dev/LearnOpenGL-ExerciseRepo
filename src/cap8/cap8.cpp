@@ -1,6 +1,7 @@
 #include "../../include/glad/glad.h"
 
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 // GLM
 #include "../../include/glm/glm.hpp"
@@ -54,6 +55,8 @@ int main() {
 
   glfwSetWindowSizeCallback(window, glfw_windows_size_change_callback);
 
+  // MATH
+
   unsigned int VAO, VBO, EAO;
 
   glGenVertexArrays(1, &VAO);
@@ -106,14 +109,21 @@ int main() {
   Shader shader = Shader("assets/shaders/cap8/shader.vert",
                          "assets/shaders/cap8/shader.frag");
   shader.use();
-
   shader.setInt("texture1", 0);
 
   glClearColor(0, 0, 0, 1);
+  unsigned int transformLoc = glGetUniformLocation(shader.ID, "MVP");
 
   while (!glfwWindowShouldClose(window)) {
-
     processInput(window);
+
+    glm::mat4 MVP = glm::mat4(1.);
+    MVP = glm::translate(MVP, glm::vec3(0.3, 0., 0.));
+    MVP = glm::scale(MVP, glm::vec3(1.2, 1.2, 1.2));
+    MVP = glm::rotate(MVP, glm::radians((float)glfwGetTime() * 100),
+                      glm::vec3(1., 1., 1.));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(MVP));
 
     glClear(GL_COLOR_BUFFER_BIT);
 
