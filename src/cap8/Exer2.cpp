@@ -117,15 +117,24 @@ int main() {
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
 
-    glm::mat4 MVP = glm::mat4(1.);
-    MVP = glm::translate(MVP, glm::vec3(0.3, 0., 0.));
-    MVP = glm::scale(MVP, glm::vec3(1.2, 1.2, 1.2));
-    MVP = glm::rotate(MVP, glm::radians((float)glfwGetTime() * 100),
-                      glm::vec3(1., 1., 1.));
+    glm::mat4 MVP1 = glm::mat4(1.);
+    MVP1 = glm::translate(MVP1, glm::vec3(0.3, 0., 0.));
+    MVP1 = glm::scale(MVP1, glm::vec3(1.2, 1.2, 1.2));
+    MVP1 = glm::rotate(MVP1, glm::radians((float)glfwGetTime() * 100),
+                       glm::vec3(0., 0., 1.));
 
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(MVP));
+    glm::mat4 MVP2 = glm::mat4(1.);
+    MVP2 = glm::translate(MVP2, glm::vec3(-0.5, 0.5, 0.));
+    MVP2 = glm::scale(MVP2, glm::vec3(1.0, 1.0, 1.0) *
+                                glm::sin((float)glfwGetTime()));
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(MVP1));
 
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(MVP2));
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
