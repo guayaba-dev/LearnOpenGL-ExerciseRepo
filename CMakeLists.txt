@@ -10,7 +10,6 @@ find_package(GLFW 3.3 QUIET)
 
 
 file(GLOB SRC_FILES src/*.cpp src/*.c)
-
 add_library(${PROJECT_NAME}_lib ${SRC_FILES})
 
 add_executable(
@@ -59,7 +58,11 @@ add_executable(
 
 add_executable(                                                  
   ${PROJECT_NAME}-cap8-Exer2 src/cap8/Exer2.cpp                  
-)                                                                
+)
+
+add_executable(                                                   
+  ${PROJECT_NAME}-cap9 src/cap9/cap9.cpp                   
+)                                                                 
 
 target_link_libraries(
   ${PROJECT_NAME}-cap5-Exer1 
@@ -155,4 +158,13 @@ target_link_libraries(
   GL                                        
   glfw                                      
   ${PROJECT_NAME}_lib                       
-)                                           
+)
+
+target_link_libraries(                       
+  ${PROJECT_NAME}-cap9                 
+  PRIVATE                                    
+  GL                                         
+  glfw                                       
+  ${PROJECT_NAME}_lib                        
+)                                            
+
