@@ -101,6 +101,7 @@ int main(int argc, char *argv[]) {
                   GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+  stbi_set_flip_vertically_on_load(true);
   data = stbi_load("assets/textures/awesomeface.png", &width, &height,
                    &nrchannels, 0);
 
