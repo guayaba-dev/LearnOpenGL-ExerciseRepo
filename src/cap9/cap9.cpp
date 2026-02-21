@@ -11,6 +11,13 @@
 #include "../../include/stb_image.h"
 #include "../shader.h"
 
+glm::vec3 cubePositions[] = {
+    glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
+    glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+
 float vertices[] = {
     -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
     0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
@@ -131,14 +138,13 @@ int main() {
   }
   stbi_image_free(data);
 
-  glm::mat4 model = glm::mat4(1.f);
   glm::mat4 view = glm::mat4(1.f);
   glm::mat4 projection = glm::mat4(1.f);
 
-  view = glm::translate(view, glm::vec3(0, 0, -1.5));
+  view = glm::translate(view, glm::vec3(0, 0, -3.0f));
 
   projection =
-      glm::perspective(glm::radians(45.f), 800.0f / 600.0f, 0.1f, 100.0f);
+      glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
   Shader shader =
       Shader("assets/shaders/cap9/cap9.vert", "assets/shaders/cap9/cap9.frag");
@@ -154,13 +160,6 @@ int main() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    model = glm::rotate(
-        model, glm::radians(0.5f + ((float)(glfwGetTime() * 0.1) / 40.f)),
-        glm::vec3(1, 0, 0));
-
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE,
-                       glm::value_ptr(model));
-
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE,
                        glm::value_ptr(view));
 
@@ -173,7 +172,22 @@ int main() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, Texture2);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    for (int i = 0; i < 10; i++) {
+
+      glm::mat4 model = glm::mat4(1.f);
+      model = glm::translate(model, cubePositions[i]);
+
+      float angle = 20.0f;
+
+      float time = (i) ? 1.f : (float)glfwGetTime() * 20.f;
+
+      model = glm::rotate(model, glm::radians(angle * i + time),
+                          glm::vec3(1, 1, 1));
+
+      glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE,
+                         glm::value_ptr(model));
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
