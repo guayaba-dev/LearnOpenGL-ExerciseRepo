@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <cstddef>
+#include <iostream>
 
 #include "../../include/glm/glm.hpp"
 #include "../../include/glm/gtc/matrix_transform.hpp"
@@ -14,11 +15,50 @@
 #define STB_CUBESVERTICES_IMPLEMENTATION
 #include "../cubesVertices.h"
 
+glm::vec3 eye;
+
+float moveSpeed = 0.05f;
+
+bool isCameraPanning = false;
+
 void processInput(GLFWwindow *window) {
 
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
+
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    eye += glm::vec3(0, 0, -1) * moveSpeed;
+
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    eye += glm::vec3(0, 0, 1) * moveSpeed;
+
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    eye += glm::vec3(1, 0, 0) * moveSpeed;
+
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    eye += glm::vec3(-1, 0, 1) * moveSpeed;
 }
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action,
+                  int mods) {
+
+  if (key == GLFW_KEY_C && action == GLFW_RELEASE)
+    isCameraPanning = !isCameraPanning;
+}
+
+void panningCamera(glm::vec3 &eye, int radius, glm::mat4 &view) {
+
+  eye = glm::vec3(radius * glm::cos(glfwGetTime()), 0.0f,
+                  radius * glm::sin(glfwGetTime()) - 0.0f);
+
+  view = glm::lookAt(eye, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+}
+
+void movingCamera(glm::vec3 &eye, glm::mat4 &view) {
+
+  view = glm::lookAt(eye, eye + glm::vec3(0, 0, -1.f), glm::vec3(0, 1, 0));
+}
+
 void glfwSizeCallBack(GLFWwindow *window, int WIDTH, int HEIGHT) {
   glViewport(0, 0, WIDTH, HEIGHT);
 }
@@ -48,6 +88,8 @@ int main(int argc, char *argv[]) {
 
   glfwMakeContextCurrent(window);
 
+  glfwSetKeyCallback(window, key_callback);
+
   ////////////////////////////
   ///
   /// PREPARING SCENE
@@ -60,6 +102,8 @@ int main(int argc, char *argv[]) {
   glEnable(GL_DEPTH_TEST);
 
   glViewport(0, 0, 800, 600);
+
+  glfwSetWindowSizeCallback(window, glfwSizeCallBack);
 
   unsigned int VAO, VBO;
 
@@ -132,9 +176,7 @@ int main(int argc, char *argv[]) {
   ///
   //////////////
 
-  glm::vec3 eye;
-
-  int radius = 4.f;
+  int radius = 10.f;
 
   glm::mat4 model = glm::mat4(1.0f);
   glm::mat4 view = glm::mat4(1.0f);
@@ -160,10 +202,8 @@ int main(int argc, char *argv[]) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
-    eye = glm::vec3(radius * glm::cos(glfwGetTime()), 0.0f,
-                    radius * glm::sin(glfwGetTime()) - 3.0f);
-
-    view = glm::lookAt(eye, glm::vec3(0, 0, -3), glm::vec3(0, 1, 0));
+    (isCameraPanning) ? panningCamera(eye, 10.f, view)
+                      : movingCamera(eye, view);
 
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE,
                        glm::value_ptr(view));
