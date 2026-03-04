@@ -68,11 +68,13 @@ add_executable(
   ${PROJECT_NAME}-cap10 src/cap10/cap10.cpp                           
 )                                                                  
 
-add_executable(                                                        
+add_executable(                                                       
   ${PROJECT_NAME}-cap10-Exer1 src/cap10/Exer1.cpp                            
 )                                                                      
 
-
+add_executable(                                                               
+  ${PROJECT_NAME}-cap10-Exer2 src/cap10/Exer2.cpp                             
+)                                                                             
 
 target_link_libraries(
   ${PROJECT_NAME}-cap5-Exer1 
@@ -191,4 +193,12 @@ target_link_libraries(
   GL                                            
   glfw                                          
   ${PROJECT_NAME}_lib                           
-)                                               
+)
+
+target_link_libraries(                                 
+  ${PROJECT_NAME}-cap10-Exer2                          
+  PRIVATE                                              
+  GL                                                   
+  glfw                                                 
+  ${PROJECT_NAME}_lib                                  
+)                                                      
