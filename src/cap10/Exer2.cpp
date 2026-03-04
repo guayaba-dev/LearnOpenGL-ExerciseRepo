@@ -17,7 +17,16 @@
 
 float lastXPos = 400.0f, lastYPos = 300.0f;
 
-float yaw = 0.0f, pitch = 0.0f;
+float yaw = 0.0f, pitch = 0.0f, fov = 90.0f;
+
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+
+  fov -= (float)yoffset;
+  if (fov < 1.0f)
+    fov = 1.0f;
+  if (fov > 145.0f)
+    fov = 145.0f;
+}
 
 namespace our_glm {
 
@@ -168,12 +177,13 @@ int main(int argc, char *argv[]) {
 
   glfwMakeContextCurrent(window);
 
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
   glfwSetKeyCallback(window, key_callback);
 
   glfwSetCursorPosCallback(window, mouse_callback);
 
+  glfwSetScrollCallback(window, scroll_callback);
+
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   ////////////////////////////
   ///
   /// PREPARING SCENE
@@ -265,18 +275,18 @@ int main(int argc, char *argv[]) {
   glm::mat4 model = glm::mat4(1.0f);
   glm::mat4 view = glm::mat4(1.0f);
 
-  glm::mat4 proj =
-      glm::perspective(glm::radians(90.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
-  glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE,
-                     glm::value_ptr(proj));
-
   shader.setInt("texture1", 0);
   shader.setInt("texture2", 1);
 
   glClearColor(0, 0, 0, 1);
   while (!glfwWindowShouldClose(window)) {
     processInput(window);
+
+    glm::mat4 proj =
+        glm::perspective(glm::radians(fov), 800.0f / 600.0f, 0.1f, 100.0f);
+
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1,
+                       GL_FALSE, glm::value_ptr(proj));
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
