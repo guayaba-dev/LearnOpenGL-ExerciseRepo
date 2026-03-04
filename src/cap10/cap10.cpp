@@ -15,7 +15,12 @@
 #define STB_CUBESVERTICES_IMPLEMENTATION
 #include "../cubesVertices.h"
 
+float lastXPos = 400.0f, lastYPos = 300.0f;
+
+float yaw = 0.0f, pitch = 0.0f;
+
 glm::vec3 eye;
+glm::vec3 cameraFront;
 
 float moveSpeed = 0.05f;
 
@@ -23,40 +28,70 @@ bool isCameraPanning = false;
 
 void processInput(GLFWwindow *window) {
 
+  glm::vec3 right = glm::cross(cameraFront, glm::vec3(0, 1, 0));
+
+  right = glm::normalize(right);
+
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    eye += glm::vec3(0, 0, -1) * moveSpeed;
+    eye += cameraFront * moveSpeed;
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    eye += glm::vec3(0, 0, 1) * moveSpeed;
-
+    eye -= cameraFront * moveSpeed;
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    eye += glm::vec3(1, 0, 0) * moveSpeed;
+    eye += right * moveSpeed;
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    eye += glm::vec3(-1, 0, 1) * moveSpeed;
+    eye -= right * moveSpeed;
+}
+
+void mouse_callback(GLFWwindow *window, double x_pos, double y_pos) {
+  float xOffset = x_pos - lastXPos;
+  float yOffset = y_pos - lastYPos;
+
+  lastXPos = x_pos;
+  lastYPos = y_pos;
+
+  float sentivity = 0.1;
+
+  xOffset *= sentivity;
+  yOffset *= sentivity;
+
+  yaw -= xOffset;
+  pitch -= yOffset;
+
+  pitch = (pitch >= 89.0f) ? 89.0f : pitch;
+  pitch = (pitch <= -89.0f) ? -89.0f : pitch;
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action,
                   int mods) {
 
-  if (key == GLFW_KEY_C && action == GLFW_RELEASE)
+  if (key == GLFW_KEY_C && action == GLFW_RELEASE) {
     isCameraPanning = !isCameraPanning;
+    yaw = 0.0f, pitch = 0.0f;
+  }
 }
 
 void panningCamera(glm::vec3 &eye, int radius, glm::mat4 &view) {
 
+  cameraFront = glm::vec3(0.0f);
+
   eye = glm::vec3(radius * glm::cos(glfwGetTime()), 0.0f,
                   radius * glm::sin(glfwGetTime()) - 0.0f);
 
-  view = glm::lookAt(eye, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+  view = glm::lookAt(eye, cameraFront, glm::vec3(0, 1, 0));
 }
 
 void movingCamera(glm::vec3 &eye, glm::mat4 &view) {
 
-  view = glm::lookAt(eye, eye + glm::vec3(0, 0, -1.f), glm::vec3(0, 1, 0));
+  cameraFront.x = glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+  cameraFront.y = glm::sin(glm::radians(pitch));
+  cameraFront.z = glm::cos(glm::radians(yaw)) * glm::cos(glm::radians(pitch));
+
+  view = glm::lookAt(eye, eye + glm::vec3(cameraFront), glm::vec3(0, 1, 0));
 }
 
 void glfwSizeCallBack(GLFWwindow *window, int WIDTH, int HEIGHT) {
@@ -88,7 +123,11 @@ int main(int argc, char *argv[]) {
 
   glfwMakeContextCurrent(window);
 
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
   glfwSetKeyCallback(window, key_callback);
+
+  glfwSetCursorPosCallback(window, mouse_callback);
 
   ////////////////////////////
   ///
@@ -176,7 +215,7 @@ int main(int argc, char *argv[]) {
   ///
   //////////////
 
-  int radius = 10.f;
+  int radius = 5.f;
 
   glm::mat4 model = glm::mat4(1.0f);
   glm::mat4 view = glm::mat4(1.0f);
@@ -202,7 +241,7 @@ int main(int argc, char *argv[]) {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
 
-    (isCameraPanning) ? panningCamera(eye, 10.f, view)
+    (isCameraPanning) ? panningCamera(eye, radius, view)
                       : movingCamera(eye, view);
 
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE,
