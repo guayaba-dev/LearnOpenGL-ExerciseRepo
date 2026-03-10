@@ -71,7 +71,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action,
 
   if (key == GLFW_KEY_C && action == GLFW_RELEASE) {
     isCameraPanning = !isCameraPanning;
-    yaw = 0.0f, pitch = 0.0f;
+
+    yaw = glm::degrees(glm::atan(-cameraFront.z, -cameraFront.x));
+    pitch = 0.0f;
   }
 }
 
@@ -80,7 +82,7 @@ void panningCamera(glm::vec3 &eye, int radius, glm::mat4 &view) {
   cameraFront = glm::vec3(0.0f);
 
   eye = glm::vec3(radius * glm::cos(glfwGetTime()), 0.0f,
-                  radius * glm::sin(glfwGetTime()) - 0.0f);
+                  radius * glm::sin(glfwGetTime()));
 
   view = glm::lookAt(eye, cameraFront, glm::vec3(0, 1, 0));
 }
